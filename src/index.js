@@ -3,10 +3,7 @@ const path = require('path');
 const csvParse = require('csv-parse');
 
 const csvPath = path.resolve(__dirname, '..', 'temp', 'brasil.csv');
-const jsonPath = path.resolve(__dirname, '..', 'temp', 'brasil.json');
 
-const ReadStream = fs.createReadStream(csvPath);
-const Writestream = fs.createWriteStream(jsonPath);
 
 async function Read() {
   const output = [];
@@ -17,8 +14,8 @@ async function Read() {
 
 
   const startRead = new Date().getTime();
+  const ReadStream = fs.createReadStream(csvPath);
   const parseCSV = ReadStream.pipe(readerCSV);
-  const finishRead = new Date().getTime();
 
   const startParse = new Date().getTime();
   parseCSV.on('data', async (line) => {
@@ -81,8 +78,12 @@ async function Read() {
   
   await new Promise(resolve => parseCSV.on('end', resolve));
   const finishParse = new Date().getTime();
+  const finishRead = new Date().getTime();
 
   const startWrite = new Date().getTime();
+  const jsonPath = path.resolve(__dirname, '..', 'temp', 'brasil.json');
+  const Writestream = fs.createWriteStream(jsonPath);
+
   Writestream.write(JSON.stringify(output));
   const finishWrite = new Date().getTime();
 
